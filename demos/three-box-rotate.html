@@ -16,7 +16,8 @@
     <script type="module">
         import * as THREE from 'https://threejs.org/build/three.module.js';
 
-        // #2: a box with rotation animation.
+        // #3: three boxes with rotation animation.
+        // https://threejs.org/manual/#zh/fundamentals
 
         function main() {
             const renderer = new THREE.WebGLRenderer();
@@ -28,22 +29,34 @@
             camera.position.z = 2;
 
             const geometry = new THREE.BoxGeometry(1, 1, 1);
-            // 红色光泽材质，需要光源照射才能看见
-            const material = new THREE.MeshPhongMaterial({ color: 0xff0000 })
-            const box = new THREE.Mesh(geometry, material);
-            
+            const boxes = [
+                createBox(geometry, 0x44aa88, 0),
+                createBox(geometry, 0x8844aa, -2),
+                createBox(geometry, 0xaa8844, 2)
+            ];
+
             // 强度为1的白色平行光
             const light = new THREE.DirectionalLight(0xffffff, 1);
             light.position.set(-1, 2, 4);
 
-            scene.add(box);
             scene.add(light);
 
             animate();
 
+            function createBox(geometry, color, positionX, ) {
+                // 红色光泽材质，需要光源照射才能看见
+                const material = new THREE.MeshPhongMaterial({ color })
+                const box = new THREE.Mesh(geometry, material);
+                box.position.x = positionX;
+                scene.add(box);
+                return box;
+            }
+
             function animate() {
-                box.rotation.x += 0.01;
-                box.rotation.y += 0.01;
+                boxes.forEach(box => {
+                    box.rotation.x += 0.01;
+                    box.rotation.y += 0.01;
+                })
                 renderer.render(scene, camera);
 
                 requestAnimationFrame(animate);
