@@ -68,6 +68,8 @@
                 const height = window.innerHeight;
                 renderer.setSize(width, height, false);
                 camera.aspect = width / height;
+
+                // 更新投影矩阵
                 camera.updateProjectionMatrix();
             }
         }

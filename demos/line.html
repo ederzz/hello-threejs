@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>hello threejs~</title>
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+        }
+    </style>
+</head>
+<body>
+    <script type="module">
+        import * as THREE from 'https://threejs.org/build/three.module.js';
+
+        // #4: line.
+
+        function main() {
+            const renderer = new THREE.WebGLRenderer();
+            renderer.setSize(window.innerWidth, window.innerHeight, false);
+            document.body.appendChild(renderer.domElement);
+
+            const scene = new THREE.Scene();
+
+            const camera = new THREE.PerspectiveCamera(45, window.innerWidth / window.innerHeight, 0.1, 100);
+            camera.position.set(0, 0, 50);
+            camera.lookAt(0, 0, 10);
+
+
+            const geometry = new THREE.BufferGeometry().setFromPoints([
+                new THREE.Vector3(-10, 0, 0),
+                new THREE.Vector3(0, 10, 0),
+                new THREE.Vector3(10, 0, 0),
+            ]);
+
+            const material = new THREE.LineBasicMaterial({ color: 0xff0000 });
+            const line = new THREE.Line(geometry, material);
+
+            scene.add(line);
+            renderer.render(scene, camera);
+        }
+
+        main();
+    </script>
+</body>
+</html>
