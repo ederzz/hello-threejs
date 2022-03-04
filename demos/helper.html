@@ -16,18 +16,15 @@
     <script src="../utils/three.js"></script>
     <script src="../utils/stats.js"></script>
     <script src="../utils/orbitControls.js"></script>
-
     <script>
-        // #index: desc
+        // #8: useful helpers.
 
         function main() {
-            // TODO:
-            
             const renderer = new THREE.WebGLRenderer();
 
             const scene = new THREE.Scene();
             const camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 100);
-            camera.position.z = 50
+            camera.position.z = 5;
 
             const boxGeometry = new THREE.BoxGeometry(1, 1, 1);
             const material = new THREE.MeshBasicMaterial();
@@ -36,10 +33,9 @@
             scene.add(box);
 
             renderer.setSize(window.innerWidth, window.innerHeight);
-            addHelper()
-
 
             document.body.appendChild(renderer.domElement);
+            addHelper();
 
             function animation() {
                 requestAnimationFrame(animation);
@@ -56,6 +52,7 @@
                 camera.aspect = width / height;
                 camera.updateProjectionMatrix();
             }
+
 
             function addHelper() {
                 // x,y,z axis
