@@ -18,11 +18,9 @@
     <script src="../utils/orbitControls.js"></script>
 
     <script>
-        // #index: desc
+        // #6.3: spot light.
 
         function main() {
-            // TODO:
-            
             const renderer = new THREE.WebGLRenderer();
             renderer.setSize(window.innerWidth, window.innerHeight);
             document.body.appendChild(renderer.domElement);
@@ -32,10 +30,17 @@
             camera.position.z = 50
 
             const boxGeometry = new THREE.BoxGeometry(1, 1, 1);
-            const material = new THREE.MeshBasicMaterial();
+            // show wireframe
+            const material = new THREE.MeshStandardMaterial();
             const box = new THREE.Mesh(boxGeometry, material);
             box.position.set(0, 0, -5);
             scene.add(box);
+
+            // light from a point, create a cone.
+            // default direction: from (0, 1, 0) to (0, 0, 0).
+            const light = new THREE.SpotLight('#fff', 2, 20, Math.PI/4, 0, 1);
+            light.position.set(10, 10, 0);
+            scene.add(light);
 
             addHelper()
             animation();
@@ -68,9 +73,8 @@
                 const controls = new THREE.OrbitControls( camera, renderer.domElement );
                 controls.update();
 
-                // view frustum of camera
-                const cameraHelper = new THREE.CameraHelper( camera );
-                scene.add( cameraHelper );
+                const helper = new THREE.SpotLightHelper( light );
+                scene.add( helper );
             }
         }
 

@@ -18,24 +18,29 @@
     <script src="../utils/orbitControls.js"></script>
 
     <script>
-        // #index: desc
+        // #6.5: hemi light.
 
         function main() {
-            // TODO:
-            
             const renderer = new THREE.WebGLRenderer();
             renderer.setSize(window.innerWidth, window.innerHeight);
             document.body.appendChild(renderer.domElement);
 
             const scene = new THREE.Scene();
             const camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 100);
-            camera.position.z = 50
+            camera.position.z = 50;
+            camera.position.x = 50;
+            camera.position.y = -50;
 
             const boxGeometry = new THREE.BoxGeometry(1, 1, 1);
-            const material = new THREE.MeshBasicMaterial();
+            // show wireframe
+            const material = new THREE.MeshStandardMaterial();
             const box = new THREE.Mesh(boxGeometry, material);
             box.position.set(0, 0, -5);
             scene.add(box);
+
+            // default position: (0, 100, 0)
+            const hemiLight = new THREE.HemisphereLight( 0xffffbb, 0x080820, 1 );
+            scene.add(hemiLight)
 
             addHelper()
             animation();
@@ -68,9 +73,8 @@
                 const controls = new THREE.OrbitControls( camera, renderer.domElement );
                 controls.update();
 
-                // view frustum of camera
-                const cameraHelper = new THREE.CameraHelper( camera );
-                scene.add( cameraHelper );
+                const lightHelper = new THREE.HemisphereLightHelper( hemiLight, 5 );
+                scene.add( lightHelper );
             }
         }
 

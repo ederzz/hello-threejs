@@ -18,11 +18,9 @@
     <script src="../utils/orbitControls.js"></script>
 
     <script>
-        // #index: desc
+        // #6.4: point light.
 
         function main() {
-            // TODO:
-            
             const renderer = new THREE.WebGLRenderer();
             renderer.setSize(window.innerWidth, window.innerHeight);
             document.body.appendChild(renderer.domElement);
@@ -32,10 +30,16 @@
             camera.position.z = 50
 
             const boxGeometry = new THREE.BoxGeometry(1, 1, 1);
-            const material = new THREE.MeshBasicMaterial();
+            // show wireframe
+            const material = new THREE.MeshStandardMaterial();
             const box = new THREE.Mesh(boxGeometry, material);
             box.position.set(0, 0, -5);
             scene.add(box);
+
+            // get lights like a lightbulb.
+            const light = new THREE.PointLight(0xffffff, 1, 100);
+            light.position.set(10, 10, 0);
+            scene.add(light);
 
             addHelper()
             animation();
@@ -68,9 +72,8 @@
                 const controls = new THREE.OrbitControls( camera, renderer.domElement );
                 controls.update();
 
-                // view frustum of camera
-                const cameraHelper = new THREE.CameraHelper( camera );
-                scene.add( cameraHelper );
+                const helper = new THREE.PointLightHelper( light, 1 );
+                scene.add( helper );
             }
         }
 
