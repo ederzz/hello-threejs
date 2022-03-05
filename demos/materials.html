@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>hello threejs~</title>
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+        }
+    </style>
+</head>
+<body>
+    <script src="../utils/three.js"></script>
+    <script src="../utils/stats.js"></script>
+    <script src="../utils/orbitControls.js"></script>
+
+    <script>
+        // #9: box with different materials.
+
+        function main() {
+            const renderer = new THREE.WebGLRenderer();
+            renderer.setSize(window.innerWidth, window.innerHeight);
+            document.body.appendChild(renderer.domElement);
+
+            const scene = new THREE.Scene();
+            const camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 100);
+            camera.position.set(0, 25, 25);
+
+            const boxGeometry = new THREE.BoxGeometry(1, 1, 1);
+            const material = new THREE.MeshBasicMaterial();
+            const box = new THREE.Mesh(boxGeometry, material);
+            box.position.set(-10, 0, 0);
+            scene.add(box);
+
+            const lambertMaterial = new THREE.MeshLambertMaterial({
+                color: '#aaa'
+            });
+            const box2 = new THREE.Mesh(boxGeometry, lambertMaterial);
+            box2.position.x = -5;
+            scene.add(box2);
+
+            const phongMaterial = new THREE.MeshPhongMaterial({
+                color: 0x7777ff,
+                specular: 0x7777f // highlight
+            });
+            const box3 = new THREE.Mesh(boxGeometry, phongMaterial);
+            scene.add(box3);
+
+            const standardMaterial = new THREE.MeshStandardMaterial({
+                color: 0xffffff,
+                metaIness: 1,
+                roughness: 0
+            });
+            const box4 = new THREE.Mesh(boxGeometry, standardMaterial);
+            box4.position.x = 5;
+            scene.add(box4);
+
+            const physicalMaterial = new THREE.MeshPhysicalMaterial({
+                color: 0x99acef,
+                metaIness: 0.5,
+                roughness: 0,
+                clearCoat: 0.5,
+                reflectivity: 0.7 
+            });
+            const box5 = new THREE.Mesh(boxGeometry, physicalMaterial);
+            box5.position.x = 10;
+            scene.add(box5);
+
+            const light = new THREE.DirectionalLight();
+            light.position.set(25, 25, 25);
+            scene.add(light);
+
+            addHelper()
+            animation();
+
+            window.onresize = function () {
+                const width = window.innerWidth;
+                const height = window.innerHeight;
+                renderer.setSize(width, height);
+                camera.aspect = width / height;
+                camera.updateProjectionMatrix();
+            }
+
+            function animation() {
+                requestAnimationFrame(animation);
+                box.rotation.x += 0.01;
+                box.rotation.y += 0.01;
+                renderer.render(scene, camera);
+            }
+
+            function addHelper() {
+                // x,y,z axis
+                const axesHelper = new THREE.AxesHelper(50);
+                scene.add(axesHelper);
+
+                // fps/ms/mb
+                const stats = new Stats();
+				document.body.appendChild( stats.dom );
+
+                // control camera
+                const controls = new THREE.OrbitControls( camera, renderer.domElement );
+                controls.update();
+            }
+        }
+
+        main();
+    </script>
+</body>
+</html>
