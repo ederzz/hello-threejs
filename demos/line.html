@@ -13,22 +13,24 @@
     </style>
 </head>
 <body>
-    <script type="module">
-        import * as THREE from 'https://threejs.org/build/three.module.js';
+    <script src="../utils/three.js"></script>
+    <script src="../utils/stats.js"></script>
+    <script src="../utils/orbitControls.js"></script>
 
+    <script>
         // #4: line.
 
         function main() {
-            const renderer = new THREE.WebGLRenderer();
+            const renderer = new THREE.WebGLRenderer({
+                antialias: true
+            });
             renderer.setSize(window.innerWidth, window.innerHeight, false);
             document.body.appendChild(renderer.domElement);
 
             const scene = new THREE.Scene();
 
-            const camera = new THREE.PerspectiveCamera(45, window.innerWidth / window.innerHeight, 0.1, 100);
-            camera.position.set(0, 0, 50);
-            camera.lookAt(0, 0, 10);
-
+            const camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
+            camera.position.set(150, 150, 150);
 
             const geometry = new THREE.BufferGeometry().setFromPoints([
                 new THREE.Vector3(-10, 0, 0),
@@ -38,9 +40,46 @@
 
             const material = new THREE.LineBasicMaterial({ color: 0xff0000 });
             const line = new THREE.Line(geometry, material);
-
             scene.add(line);
+
+            const dashedMaterial = new THREE.LineDashedMaterial( {
+                color: 0xffffff,
+                linewidth: 1,
+                scale: 1,
+                dashSize: 3,
+                gapSize: 1,
+            } );
+            const dashedLine = new THREE.Line(geometry, dashedMaterial);
+            dashedLine.position.set(10, 10, 10);
+            dashedLine.computeLineDistances();
+            scene.add(dashedLine);
+
+            addHelper();
             renderer.render(scene, camera);
+            animation();
+
+            function animation() {
+                requestAnimationFrame(animation);
+                renderer.render(scene, camera);
+            }
+
+            function addHelper() {
+                // x,y,z axis
+                const axesHelper = new THREE.AxesHelper(50);
+                scene.add(axesHelper);
+
+                // fps/ms/mb
+                const stats = new Stats();
+				document.body.appendChild( stats.dom );
+
+                // control camera
+                const controls = new THREE.OrbitControls( camera, renderer.domElement );
+                controls.update();
+
+                // view frustum of camera
+                const cameraHelper = new THREE.CameraHelper( camera );
+                scene.add( cameraHelper );
+            }
         }
 
         main();
