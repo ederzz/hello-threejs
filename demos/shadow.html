@@ -13,53 +13,56 @@
     </style>
 </head>
 <body>
-    <script type="module">
-        import * as THREE from 'https://threejs.org/build/three.module.js';
+    <script src="../utils/three.js"></script>
+    <script src="../utils/stats.js"></script>
+    <script src="../utils/orbitControls.js"></script>
 
-        // #7: box with shadow.
+    <script>
+        // #7: Mesh with shadow.
 
         function main() {
-            const renderer = new THREE.WebGLRenderer({antialias:true});
-            renderer.shadowMap.enabled = true;
-            renderer.shadowMap.type = THREE.PCFSoftShadowMap;
+            const renderer = new THREE.WebGLRenderer();
             renderer.setSize(window.innerWidth, window.innerHeight);
             document.body.appendChild(renderer.domElement);
+            // 1.use shadow map in the scene.
+            renderer.shadowMap.enabled = true;
 
             const scene = new THREE.Scene();
             const camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
-            camera.position.set(0, 40, 100);
-            camera.lookAt(new THREE.Vector3(0,0,0));
+            camera.position.set(200, 200, 200);
 
-            const boxGeometry = new THREE.BoxGeometry(10, 10, 10);
-            const material = new THREE.MeshLambertMaterial({ color: 0x00ffff });
+            // shadow camera of DirectionalLight is OrthographicCamera.
+            const light = new THREE.DirectionalLight();
+            light.position.set(100, 100, 100);
+            // 2.make light to cast shadow.
+            light.castShadow = true;
+            light.shadow.camera.top = 50;
+            light.shadow.camera.bottom = -50;
+            light.shadow.camera.left = 50;
+            light.shadow.camera.right = -50;
+            scene.add(light);
+
+            const boxGeometry = new THREE.BoxGeometry(50, 50, 50);
+            const material = new THREE.MeshLambertMaterial({
+                color: '#0f0'
+            });
+            // 3.make mesh to cast shadow.
             const box = new THREE.Mesh(boxGeometry, material);
-            box.position.set(25, 10, -5);
             box.castShadow = true;
+            box.receiveShadow = true;
             scene.add(box);
 
-            const planeGeometry = new THREE.PlaneGeometry(100, 100);
-            const planeMaterial = new THREE.MeshStandardMaterial({
-                color: 0xaaaaaa,
-            });
-            const plane = new THREE.Mesh(planeGeometry, planeMaterial);
-            plane.rotation.x = - 0.5 * Math.PI;
-            plane.position.y = 0;
+
+            const planeGeo = new THREE.PlaneGeometry(400, 300);
+            const planeMaterial = new THREE.MeshLambertMaterial();
+            const plane = new THREE.Mesh(planeGeo, planeMaterial);
+            plane.position.y = -50;
+            plane.rotation.set(-Math.PI / 2, 0, Math.PI / 4);
+            // 4.make plane to receive shadow.
             plane.receiveShadow = true;
             scene.add(plane);
 
-            const spotLight = new THREE.SpotLight( 0xffffff );
-            spotLight.position.set(60,30,0);
-            spotLight.castShadow = true;
-            scene.add( spotLight );
-
-            scene.add(new THREE.AmbientLight(0x444444));
-
-            function animation() {
-                requestAnimationFrame(animation);
-                box.rotation.x += 0.01;
-                box.rotation.y += 0.01;
-                renderer.render(scene, camera);
-            }
+            addHelper()
             animation();
 
             window.onresize = function () {
@@ -69,9 +72,36 @@
                 camera.aspect = width / height;
                 camera.updateProjectionMatrix();
             }
+
+            function animation() {
+                requestAnimationFrame(animation);
+                box.rotation.x += 0.01;
+                box.rotation.y += 0.01;
+                renderer.render(scene, camera);
+            }
+
+            function addHelper() {
+                // x,y,z axis
+                const axesHelper = new THREE.AxesHelper(250);
+                scene.add(axesHelper);
+
+                // fps/ms/mb
+                const stats = new Stats();
+				document.body.appendChild( stats.dom );
+
+                // control camera
+                const controls = new THREE.OrbitControls( camera, renderer.domElement );
+                controls.update();
+
+                // view camera of shadow.
+                const cameraHelper = new THREE.CameraHelper( light.shadow.camera );
+                scene.add( cameraHelper );
+
+                const lightHelper = new THREE.DirectionalLightHelper(light);
+                scene.add(lightHelper);
+            }
         }
 
         main();
     </script>
 </body>
-</html>
