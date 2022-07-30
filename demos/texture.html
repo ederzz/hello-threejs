@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>hello threejs~</title>
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+        }
+    </style>
+</head>
+<body>
+    <script type="module">
+        import * as THREE from 'https://threejs.org/build/three.module.js';
+
+        // #2: a box with rotation animation.
+
+        function main() {
+            const renderer = new THREE.WebGLRenderer();
+            renderer.setSize(window.innerWidth, window.innerHeight, false);
+            document.body.appendChild(renderer.domElement);
+
+            const scene = new THREE.Scene();
+            const camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 5);
+            camera.position.z = 2;
+
+            const geometry = new THREE.BoxGeometry(1, 1, 1);
+            const texture = new THREE.TextureLoader().load( 'https://gimg2.baidu.com/image_search/src=http%3A%2F%2Fb-ssl.duitang.com%2Fuploads%2Fitem%2F201501%2F23%2F20150123003528_Qxz2a.jpeg&refer=http%3A%2F%2Fb-ssl.duitang.com&app=2002&size=f9999,10000&q=a80&n=0&g=0n&fmt=auto?sec=1661791657&t=79cb262107dfb827dbf50df76e215dce' );
+            // 红色光泽材质，需要光源照射才能看见
+            const material = new THREE.MeshPhongMaterial({ map: texture })
+            console.log('eder', geometry)
+            geometry.attributes.uv.array.forEach((item, index) => {
+                console.log(item, index)
+                if (item === 1) {
+                    geometry.attributes.uv.array[index] = 2
+                }
+            })
+            const box = new THREE.Mesh(geometry, material);
+
+            
+            // 强度为1的白色平行光
+            const light = new THREE.DirectionalLight(0xffffff, 1);
+            light.position.set(-1, 2, 4);
+
+            scene.add(box);
+            scene.add(light);
+
+            animate();
+
+            function animate() {
+                box.rotation.x += 0.01;
+                box.rotation.y += 0.01;
+                renderer.render(scene, camera);
+
+                requestAnimationFrame(animate);
+            }
+
+            const canvas = renderer.domElement;
+            window.onresize = function () {
+                const width = window.innerWidth;
+                const height = window.innerHeight;
+                renderer.setSize(width, height, false);
+                camera.aspect = width / height;
+                camera.updateProjectionMatrix();
+            }
+        }
+
+        main();
+    </script>
+</body>
+</html>
